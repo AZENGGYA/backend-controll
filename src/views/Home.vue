@@ -8,7 +8,7 @@
         <div style="margin: 30px;"></div>
         <el-form  label-position="right" status-icon  label-width="100px" style="float:left">
           <el-form-item label="用户名">
-           <el-input v-model="userlogin.username" placeholder="请输入账号" clearable></el-input>
+           <el-input v-model="userlogin.username" placeholder="请输入账号" ></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input v-model="userlogin.password" placeholder="请输入密码" show-password clearable></el-input>
@@ -48,9 +48,11 @@ export default {
   methods:{
     login(){
       let _this = this
-      this.$axios.post('/login',this.userlogin)
+      this.$axios.post('/user/login',this.userlogin)
       .then(function(response){
         if(response.data.code === 200){
+          localStorage.setItem('token',JSON.stringify(response.data.data.token));
+        
           _this.$router.push("/about")
         }else{
           alert("登录失败！失败！");

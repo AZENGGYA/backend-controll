@@ -22,9 +22,9 @@
       <!-- 左部导航栏 -->
       <el-aside width="200px" style="background-color: #ECECEC">
         <el-menu
-          
+          :default-active="$route.path"
+          @select="handleSelect"
           class="el-menu-vertical-demo"
-         
           background-color="#ECECEC"
           text-color="black"
           active-text-color="rgb(32,160,255)"
@@ -35,43 +35,47 @@
               <span>商店管理</span>
             </template>
             <el-menu-item-group>
-              <template slot="title"></template>
-                <router-link to="/main" style=" text-decoration:none;">
-                  <el-menu-item index="1-1">地址管理</el-menu-item>
-                </router-link>
+              <template slot="title">分级</template>
+                
+                  <el-menu-item index="/main">商品管理</el-menu-item>
 
-                <router-link to="/publicarticle" style=" text-decoration:none;">
-                  <el-menu-item index="1-2">啊</el-menu-item>
-                </router-link>
+                  <el-menu-item index="/addshop"
+
+                  :disabled="judge_status"
+                    >
+                    新增商店
+                  </el-menu-item>
             </el-menu-item-group>
             
           </el-submenu>
 
           
-          <router-link to="/crm" style=" text-decoration:none;">
-            <el-menu-item index="2" >
+         
+            <el-menu-item index="/crm" >
               <i class="el-icon-menu"></i>
               <span slot="title">用户管理</span>
             </el-menu-item>
-          </router-link>
+     
           
 
 
-          <router-link to="/columnmanage" style=" text-decoration:none;">
-            <el-menu-item index="3" >
+          
+            <el-menu-item index="/ordermanage" >
               <i class="el-icon-document"></i>
               <span slot="title">订单管理</span>
             </el-menu-item>
-          </router-link>
+        
 
-         <router-link to="/datastatistics" style=" text-decoration:none;">
-            <el-menu-item index="4">
+        
+            <el-menu-item index="/datastatistics">
               <i class="el-icon-setting"></i>
               <span slot="title">数据统计</span>
             </el-menu-item>
-         </router-link>
+         
 
         </el-menu>
+
+
       </el-aside>
       
       <!-- 主要内容区域 -->
@@ -113,6 +117,24 @@
 
 <script>
   export default {
+    data(){
+      return{
+        status : -2
+      }
+    },
+    methods: {
+      handleSelect(data){
+        this.$router.push({path:data})
+      },
+      
+    },
+    created(){
+      if(this.status == -2){
+        this.judge_status = false;
+      }else{
+        this.judge_status = true;
+      }
+    }
     
   };
 </script>

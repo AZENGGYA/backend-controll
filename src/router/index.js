@@ -6,7 +6,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/backend/login',
     name: 'Home',
     component: Home,
   },
@@ -18,12 +18,12 @@ const routes = [
       {
         path:'/main',
         name:'文章列表',
-        component: () => import( /**/'../components/ArticleList.vue')
+        component: () => import( /**/'../components/CommodityManage.vue')
       },
       {
-        path:'/publicarticle',
+        path:'/addshop',
         name:'发表文章',
-        component: () => import( /**/'../components/PublicArticle.vue')
+        component: () => import( /**/'../components/AddShop.vue')
       },
       {
         path:'/crm',
@@ -31,9 +31,9 @@ const routes = [
         component: () => import( /**/'../components/CRM.vue')
       },
       {
-        path:'/columnmanage',
+        path:'/ordermanage',
         name:'栏目管理',
-        component: () => import( /**/'../components/ColumnManage.vue')
+        component: () => import( /**/'../components/OrderManage.vue')
       },
       {
         path:'/datastatistics',
