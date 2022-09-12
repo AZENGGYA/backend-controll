@@ -52,7 +52,7 @@ export default {
       .then(function(response){
         if(response.data.code === 200){
           localStorage.setItem('token',JSON.stringify(response.data.data.token));
-        
+
           _this.$router.push("/about")
         }else{
           alert("登录失败！失败！");
