@@ -6,6 +6,7 @@
     v-for="item in shopNameData"
     :key="item.shopName"
     @click="addTab(item)"
+     type="danger"
     >
       {{item.shopName}}
     </el-button>
@@ -167,7 +168,7 @@
       <el-tab-pane label="角色管理">角色管理</el-tab-pane>
       <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
 
-      <el-button type="text" @click="dialogFormVisible = true">打开嵌套表单的 Dialog</el-button>
+      
 
       <el-dialog title="商品修改" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules"  ref="form" >

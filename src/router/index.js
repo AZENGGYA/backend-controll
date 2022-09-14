@@ -17,12 +17,12 @@ const routes = [
     children:[
       {
         path:'/main',
-        name:'文章列表',
+        name:'商品管理',
         component: () => import( /**/'../components/CommodityManage.vue')
       },
       {
         path:'/addshop',
-        name:'发表文章',
+        name:'新增商店',
         component: () => import( /**/'../components/AddShop.vue')
       },
       {
@@ -32,7 +32,7 @@ const routes = [
       },
       {
         path:'/ordermanage',
-        name:'栏目管理',
+        name:'订单管理',
         component: () => import( /**/'../components/OrderManage.vue')
       },
       {
