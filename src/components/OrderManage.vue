@@ -198,6 +198,7 @@
           <el-pagination
           :page-size="this.pageInfo.pageSize"
           @current-change="toPage"
+          :current-page.sync="currentPage"
           layout="total, prev, pager, next, jumper"
           :total="total"
           style="float:right;margin-top:20px">
@@ -372,6 +373,7 @@ export default {
   
   data() {
       return {
+        currentPage:1,
         judgeSearch:false,
         total:null,
         pageInfo:{
@@ -557,9 +559,10 @@ export default {
 
       searchOrder(){
         if(!this.judgeSearch)
-          this.judgeSearch = true;
-        
+          this.judgeSearch = true;       
         let _this = this;
+        this.pageInfo._currentPage = 1;
+        this.currentPage = 1;
         if(this.search != null && this.search !=''){
           instance.post("/backendorder/searchOrder",{search:this.search,pageInfo:this.pageInfo})
           .then(function(response){
@@ -607,7 +610,28 @@ export default {
           }
         }else{
           this.pageInfo._currentPage = currentPage;
-          this.searchOrder();
+          if(!this.judgeSearch)
+            this.judgeSearch = true;       
+          let _this = this;
+          if(this.search != null && this.search !=''){
+            instance.post("/backendorder/searchOrder",{search:this.search,pageInfo:this.pageInfo})
+            .then(function(response){
+              if(response.data.code == 200){
+                _this.tableData = response.data.data
+                if(_this.tableData != ''){          
+                  _this.total = _this.tableData[0].searchTotal               
+                }else{
+                  _this.total = 0;
+                }
+              }
+            },response=>{
+              alert("搜索失败")
+            })
+          }else{
+            this.judgeSearch = false;
+            this.rawAllOrder();
+            this.getCount();  
+          }
         }
       }
     },
