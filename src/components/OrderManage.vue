@@ -1,6 +1,76 @@
 <template>
   <div style="margin-top:20px;">
-    <!-- <el-button type="text" @click="orderInfo()">点击打开 Dialog</el-button> -->
+    <el-dialog  title="订单详情"
+      :visible.sync="dialogVisible2"
+      width="30%">
+      <el-steps :active="active" align-center>
+        <el-step title="步骤1" description="审核退单理由"></el-step>
+        <el-step title="步骤2" description="确定是否为该用户退单"></el-step>       
+        <el-step title="步骤3" description="审核完成"></el-step>     
+      </el-steps>
+
+      <el-descriptions  direction="vertical" :column="3" border v-if="active == 0? true:active == 1? true:false" style="margin-top:20px">
+          <el-descriptions-item label="订单号">{{examineOrderForm.id}}</el-descriptions-item>
+          <el-descriptions-item label="用户名">{{examineOrderForm.userName}}</el-descriptions-item>
+          <el-descriptions-item label="手机号">{{examineOrderForm.userPhone}}</el-descriptions-item>
+          <el-descriptions-item label="收货地址" :span="2">{{examineOrderForm.userAddress}}</el-descriptions-item>   
+          <el-descriptions-item label="订单总金额">{{examineOrderForm.totalAmount}}</el-descriptions-item>          
+          <el-descriptions-item label="退单原因" >{{examineOrderForm.reason}}</el-descriptions-item>
+      </el-descriptions>
+
+      
+         
+            <div style="margin-top:20px;margin-right:5px; display:inline-block;" 
+                v-if="active == 1? true:false">    
+              <el-popover
+                placement="top"
+                width="160"
+                v-model="visible_refute">
+                <p>确定拒予退单吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="visible_refute = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="examineOrderResult(false)">确定</el-button>
+                </div>
+                <el-button slot="reference" type="danger" round>拒绝</el-button>
+              </el-popover>     
+            </div>
+       
+
+  
+          
+            <div style="margin-top:20px;margin-left:5px; display:inline-block;" 
+                v-if="active == 1? true:false">    
+              <el-popover
+                placement="top"
+                width="160"
+                v-model="visible_approval">
+                <p>确定批准退单吗？</p>
+                <div style="text-align: right; margin: 0">
+                  <el-button size="mini" type="text" @click="visible_approval = false">取消</el-button>
+                  <el-button type="primary" size="mini" @click="examineOrderResult(true)">确定</el-button>
+                </div>
+                <el-button slot="reference" type="success" round>通过</el-button>
+              </el-popover>     
+            </div>
+          
+          
+
+     
+
+      <el-result icon="success" title="成功提示" subTitle="审核完成！" v-if="active == 2 ? true:false">
+        <template slot="extra">
+          <el-button type="primary" size="medium" @click="dialogVisible2 = false">关闭</el-button>
+        </template>
+      </el-result>
+    
+
+      <el-button style="margin-top: 12px;float:bo" @click="next" v-if="active == 0 ? true:false">下一步</el-button>  
+
+    
+
+    </el-dialog>
+
+
     <el-dialog     
       title="订单详情"
       :visible.sync="dialogVisible"
@@ -96,12 +166,17 @@
                 <template slot-scope="scope">
                     <el-tag 
                     size="medium"
-                    :type="scope.row.status <= 0 ?  'danger' :'success'  "
+                    :type="scope.row.status > 0 
+                           ? 'success' 
+                           :scope.row.status == -2
+                           ? 'success' : 'danger' 
+                           "
                     >
                     {{
                         scope.row.status > 0
                         ? "已付款"
-                        : "未付款"                        
+                        : scope.row.status == -2
+                        ? "已付款" : "未付款"                       
                     }}
                     </el-tag>
                 </template>
@@ -213,6 +288,8 @@
         <el-table
         :data="chargeBackData"  
         style="width: 100%">
+          
+
           <el-table-column
           
               prop="id"
@@ -254,12 +331,17 @@
                 <template slot-scope="scope">
                     <el-tag 
                     size="medium"
-                    :type="scope.row.status <= 0 ?  'danger' :'success'  "
+                    :type="scope.row.status > 0 
+                           ? 'success' 
+                           : scope.row.status == -2
+                           ? 'success'
+                           : 'danger'" 
                     >
                     {{
                         scope.row.status > 0
                         ? "已付款"
-                        : "未付款"                        
+                        : scope.row.status == -2
+                        ? "已付款" : "未付款"                       
                     }}
                     </el-tag>
                 </template>
@@ -373,6 +455,10 @@ export default {
   
   data() {
       return {
+        visible_refute: false,
+        visible_approval:false,
+        active:0,
+        dialogVisible2:false,
         currentPage:1,
         judgeSearch:false,
         total:null,
@@ -392,11 +478,18 @@ export default {
         },
         cancelOrderForm:{
           id:null,
-          status:null
+          status:null,
+          userid:null,
+          totalAmount:null,
+          judgePay:null
         },
         chargeBackForm:{
           id:null,
-          status:null
+          status:null,
+          userid:null,
+          totalAmount:null,
+          closeType:null,
+          opinion:null
         },
         orderInfoForm:{
           id:null,
@@ -406,11 +499,25 @@ export default {
           userAddress:null,
           createTime:null,
           reason:null
+        },
+        examineOrderForm:{
+          index:null,
+          id:null,
+          userId:null,
+          totalAmount:null,
+          userName:null,
+          userPhone:null,
+          userAddress:null,
+          reason:null,
+          closeType:null,
+          status:null
         }
       }
     },
     methods:{
-      
+      next() {
+        if (this.active++ > 2) this.active = 0;
+      },
 
       delivery(index, row) {
         this.deliveryForm.id = row.id;
@@ -444,6 +551,14 @@ export default {
        cancelOrder(index, row) {
         this.cancelOrderForm.id = row.id;
         this.cancelOrderForm.status = row.status;
+        this.cancelOrderForm.userid = row.userId;
+        if(row.status == 1){
+          this.cancelOrderForm.totalAmount = row.totalAmount;
+          this.cancelOrderForm.judgePay = true
+        }
+        // else{
+        //   this.cancelOrderForm.judgePay = false
+        // }
         this.$confirm('您确定取消该订单吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -480,10 +595,14 @@ export default {
           let _this = this
           this.chargeBackForm.id = row.id;
           this.chargeBackForm.status = row.status;
+          this.chargeBackForm.userid = row.userId;
+          this.chargeBackForm.totalAmount = row.totalAmount;
           this.chargeBackForm.reason = value
+          this.chargeBackData.totalAmount = value
           instance.post("/backendorder/directCB",this.chargeBackForm)
           .then(function(response){
             if(response.data.code == 200){
+              row.status = -4;
               _this.$message({
                 type: 'success',
                 message: '退单成功'
@@ -501,31 +620,57 @@ export default {
         });
       },
       examineOrder(index, row){
-        this.$confirm('退单原因:'+row.reason, '审核', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then(() => {          
-          this.chargeBackForm.id = row.id;
-          this.chargeBackForm.status = row.status;          
+        this.examineOrderForm = row
+        this.examineOrderForm.index = index
+        this.dialogVisible2 = true;
+      },
+
+      examineOrderResult(judge){
+        if(!judge){
+          this.visible_refute = false;
+          this.chargeBackForm.opinion = false;
+          this.chargeBackForm.id = this.examineOrderForm.id;
+          this.chargeBackForm.status = this.examineOrderForm.status;
+          this.chargeBackForm.closeType = this.examineOrderForm.closeType        
           let _this = this
           instance.post("/backendorder/examineOrder",this.chargeBackForm)
           .then(function(response){
             if(response.data.code == 200){
-              row.status = -3
+              _this.tableData[_this.examineOrderForm.index].status = _this.examineOrderForm.closeType;
+              _this.tableData[_this.examineOrderForm.index].closeType = null;
+              _this.active++;
               _this.$message({
                 type: 'success',
-                message: '审核通过，退单成功'
+                message: '审核完成，拒予退单'
               });
             }
           },response=>{
             alert("退单错误！")
           })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消审核'
-          });          
-        });
+        }else{
+          this.visible_approval = false;
+          this.chargeBackForm.opinion = true;
+          this.chargeBackForm.id = this.examineOrderForm.id;
+          this.chargeBackForm.totalAmount = this.examineOrderForm.totalAmount
+          this.chargeBackForm.userid = this.examineOrderForm.userId;
+          this.chargeBackForm.status = this.examineOrderForm.status;
+          this.chargeBackForm.closeType = this.examineOrderForm.closeType          
+          let _this = this
+          instance.post("/backendorder/examineOrder",this.chargeBackForm)
+          .then(function(response){
+            if(response.data.code == 200){
+              _this.tableData[_this.examineOrderForm.index].status = -3;
+              _this.tableData[_this.examineOrderForm.index].closeType = _this.examineOrderForm.closeType;
+              _this.active++;
+              _this.$message({
+                type: 'success',
+                message: '审核完成，允许退单'
+              });
+            }
+          },response=>{
+            alert("退单错误！")
+          })         
+        }
       },
 
       rawAllOrder(){
