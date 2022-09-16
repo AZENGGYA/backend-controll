@@ -48,14 +48,13 @@ export default {
   methods:{
     login(){
       let _this = this
-      this.$axios.post('/user/login',this.userlogin)
+      this.$axios.post('/user/login2',this.userlogin)
       .then(function(response){
         if(response.data.code === 200){
           localStorage.setItem('token',JSON.stringify(response.data.data.token));
-
-          _this.$router.push("/about")
+          _this.$router.push("/main")
         }else{
-          alert("登录失败！失败！");
+          alert(response.data.msg);
         }
       },response=> {
       alert("请求失败！");
