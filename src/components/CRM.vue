@@ -89,7 +89,7 @@
       </el-tab-pane>
 
 
-      <el-dialog title="商品修改" :visible.sync="dialogFormVisible">
+      <el-dialog title="用户修改" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules"  ref="form" >
         <el-form-item label="用户名称" :label-width="formLabelWidth">
           <el-input v-model="form.username" autocomplete="off"></el-input>
