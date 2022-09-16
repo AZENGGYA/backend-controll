@@ -3,7 +3,7 @@
 
     <el-container style="height: 600px; margin-top:0px;border: 1px solid #eee;">
       <!-- 顶部 -->
-      <el-header style="text-align: right; font-size: 12px;background-color:#20A0FF">
+      <el-header style="text-align: right; font-size: 12px;background-color:#3C8CBD;box-shadow:12px 15px 10px -15px #000">
           <span style="color:white;float:left;font-size:25px;margin-left:10px;">宠可梦管理平台</span>
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
@@ -25,9 +25,10 @@
           :default-active="$route.path"
           @select="handleSelect"
           class="el-menu-vertical-demo"
-          background-color="#ECECEC"
-          text-color="black"
-          active-text-color="rgb(32,160,255)"
+          background-color="#545c64"
+      text-color="#fff"
+      active-text-color="#38A3F7"
+      style="height: 100%"
           >
           <el-submenu index="1">
             <template slot="title">
@@ -39,12 +40,12 @@
                 
                   <el-menu-item index="/main">商品管理</el-menu-item>
 
-                  <el-menu-item index="/addshop"
+                  <!-- <el-menu-item index="/addshop"
 
                   :disabled="judge_status"
                     >
                     新增商店
-                  </el-menu-item>
+                  </el-menu-item> -->
             </el-menu-item-group>
             
           </el-submenu>
@@ -109,8 +110,9 @@
     color: #333;
   }
   .el-menu-item.is-active {
-   background-color: white !important; /*无论怎么设置css都无法覆盖颜色，这时可以使用!important。*/
+   /* background-color: white !important; 无论怎么设置css都无法覆盖颜色，这时可以使用!important。 */
    border-left-color:black;
+   
  }
 
 </style>

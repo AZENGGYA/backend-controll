@@ -75,9 +75,9 @@
       </el-table>
 
       <el-pagination
-        background
+      
         layout="total, prev, pager, next, jumper"
-        
+        background
         :page-size="pageInfo.pageSize"
         :total="item.total"
         @current-change="(val) => toPageTabs(item, val)"

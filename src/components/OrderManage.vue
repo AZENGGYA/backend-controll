@@ -271,6 +271,7 @@
           </el-table-column>
         </el-table>
           <el-pagination
+          background
           :page-size="this.pageInfo.pageSize"
           @current-change="toPage"
           :current-page.sync="currentPage"
@@ -438,6 +439,17 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <el-pagination
+          background
+          :page-size="this.pageInfo.pageSize"
+          @current-change="toPage2"
+          :current-page.sync="currentPage"
+          layout="total, prev, pager, next, jumper"
+          :total="total2"
+          style="float:right;margin-top:20px">
+          </el-pagination>
+          
       </el-tab-pane>
 
       <el-tab-pane label="待定" name="third">角色管理</el-tab-pane>
@@ -462,7 +474,12 @@ export default {
         currentPage:1,
         judgeSearch:false,
         total:null,
+        total2:null,
         pageInfo:{
+          _currentPage:1,
+          pageSize:3
+        },
+        pageInfo2:{
           _currentPage:1,
           pageSize:3
         },
@@ -598,7 +615,7 @@ export default {
           this.chargeBackForm.userid = row.userId;
           this.chargeBackForm.totalAmount = row.totalAmount;
           this.chargeBackForm.reason = value
-          this.chargeBackData.totalAmount = value
+          // this.chargeBackData.totalAmount = value
           instance.post("/backendorder/directCB",this.chargeBackForm)
           .then(function(response){
             if(response.data.code == 200){
@@ -686,7 +703,7 @@ export default {
         }
         /* 请求退单申请数据 */
         
-        instance.post('/backendorder/getChargeBack')
+        instance.post('/backendorder/getChargeBack',this.pageInfo2)
         .then(function(response){
           if(response.data.code == 200){
             _this.chargeBackData = response.data.data
@@ -740,6 +757,17 @@ export default {
             alert("搜索失败")
           })
       },
+      getChargeBackCount(){
+        let _this = this;
+        instance.post("/backendorder/getChargeBackCount")
+          .then(function(response){
+            if(response.data.code == 200){
+              _this.total2 = response.data.data
+            }
+          },response=>{
+            alert("搜索失败")
+          })
+      },
 
       toPage(currentPage){
         let _this = this
@@ -778,12 +806,25 @@ export default {
             this.getCount();  
           }
         }
+      },
+      toPage2(currentPage){
+        let _this = this
+        this.pageInfo2._currentPage = currentPage;
+        instance.post('/backendorder/getChargeBack',this.pageInfo2)
+        .then(function(response){
+          if(response.data.code == 200){
+            _this.chargeBackData = response.data.data
+          }
+        }),response=>{
+          alert("数据行数请求失败！")
+        }
       }
     },
 
     created(){
       this.rawAllOrder();
-      this.getCount();     
+      this.getCount();
+      this.getChargeBackCount()
     }
 }
 </script>
